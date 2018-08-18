@@ -149,7 +149,7 @@ def read(name):
             # Therefore, we keep the last chunk aside looking for a potential
             # bigger chunk.
             ck_idx = 0
-            for ck_start, ck_end, ck_data in iterator.xlast(
+            for ck_start, ck_end, ck_data in iterator.onexlast(
                 chop(buffer[:bf_end])
             ):
                 yield fp_idx + ck_start, fp_idx + ck_end, bytes(ck_data)
@@ -163,5 +163,6 @@ def read(name):
             fp_idx += ck_idx
 
         # We're done reading the file, chopping remaining data.
-        for ck_start, ck_end, ck_data in chop(remain):
-            yield fp_idx + ck_start, fp_idx + ck_end, bytes(ck_data)
+        if remain:
+            for ck_start, ck_end, ck_data in chop(remain):
+                yield fp_idx + ck_start, fp_idx + ck_end, bytes(ck_data)
