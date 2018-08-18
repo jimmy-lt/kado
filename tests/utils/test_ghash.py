@@ -1,5 +1,5 @@
-# tests/utils/ghash.py
-# ====================
+# tests/utils/test_ghash.py
+# =========================
 #
 # Copying
 # -------
