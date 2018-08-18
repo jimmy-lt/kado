@@ -19,6 +19,7 @@
 # If not, see <http://opensource.org/licenses/MIT>.
 #
 from kado import constants as c
+from kado.utils import iterator
 
 
 # Source:
@@ -109,3 +110,58 @@ def chop(data):
 
         yield ck_start, ck_end, data[ck_start:ck_end]
         ck_start, ct_idx = ck_end, min(ck_end + c.GHASH_CHUNK_HI, data_size)
+
+
+def read(name):
+    """Read given file and split it in normalized chunks.
+
+
+    :param name: Path to the file to split in chunks.
+    :type name: python:str
+
+    :returns: A three items tuple with the chunk start index, the chunk length
+              and the chunk data.
+    :rtype: ~typing.Tuple[python:int, python:int, python:bytes]
+
+    """
+    fp_idx = 0              # Current position in the file.
+    remain = bytearray()    # Data remaining from the chunking process.
+    buffer = bytearray(c.GHASH_CHUNK_HI)    # Buffer to keep file data.
+
+    with open(name, 'rb') as fp:
+        while True:
+            # Load up to :data:`~kado.constants.GHASH_CHUNK_HI` file data into
+            # the buffer.
+            read_bytes = fp.readinto(buffer)
+            if read_bytes == 0:
+                # No more data? We're getting out of here.
+                break
+
+            # We prepend remaining data from previous iteration before chopping.
+            buffer = remain + buffer
+            # Keep in mind read data can be lower than actual buffer size.
+            bf_end = read_bytes + len(remain)
+
+            # :func:`~kado.utils.ghash.chop` will cut all given data, however
+            # the last chunk may not be the end of the file and we may still
+            # have some more data to read.
+            #
+            # Therefore, we keep the last chunk aside looking for a potential
+            # bigger chunk.
+            ck_idx = 0
+            for ck_start, ck_end, ck_data in iterator.xlast(
+                chop(buffer[:bf_end])
+            ):
+                yield fp_idx + ck_start, fp_idx + ck_end, bytes(ck_data)
+                ck_idx = ck_end
+
+            # Saving the last chunk of data for the next iteration.
+            remain = buffer[ck_idx:bf_end]
+            buffer = bytearray(c.GHASH_CHUNK_HI - len(remain))
+
+            # Raising our file index.
+            fp_idx += ck_idx
+
+        # We're done reading the file, chopping remaining data.
+        for ck_start, ck_end, ck_data in chop(remain):
+            yield fp_idx + ck_start, fp_idx + ck_end, bytes(ck_data)
