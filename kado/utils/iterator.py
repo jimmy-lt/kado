@@ -18,6 +18,7 @@
 # You should have received a copy of the MIT License along with kado.
 # If not, see <http://opensource.org/licenses/MIT>.
 #
+from contextlib import suppress
 
 
 def xlast(iterable):
@@ -48,3 +49,25 @@ def xlast(iterable):
 
         yield current
         current = follow
+
+
+def onexlast(iterable):
+    """Make an iterator that returns at least one element from iterable else all
+    except the last one.
+
+
+    :param iterable: Iterable to get the elements from.
+    :type iterable: ~collections.abc.Iterable
+
+
+    :returns: An iterator where at least one element is returned from iterable.
+              If there are many items available, all are returned except the
+              last one.
+    :rtype: ~collections.abc.Iterator
+
+    """
+    it = iter(iterable)
+
+    with suppress(StopIteration):
+        yield next(it)
+        yield from xlast(it)
