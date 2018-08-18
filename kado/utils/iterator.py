@@ -35,7 +35,11 @@ def xlast(iterable):
     """
     it = iter(iterable)
 
-    current = next(it)
+    try:
+        current = next(it)
+    except StopIteration:
+        return
+
     while True:
         try:
             follow = next(it)
