@@ -72,5 +72,6 @@ setup(
 
     install_requires=[
         'semver',
+        'xxhash',
     ],
 )

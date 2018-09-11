@@ -104,3 +104,13 @@ GHASH_MASK_LO = 0x0003590703530000
 GHASH_MASK_MD = 0x0000d90303530000
 #: High-end mask value, with 11 bits set to ``1``.
 GHASH_MASK_HI = 0x0000d90003530000
+
+
+#: 64 bits seed value given to xxHash.
+XXH64_DATA_SEED = 0xdd5ad0a8f4b149d1
+
+
+#: BLAKE2 digest size in bytes.
+BLAKE2_DATA_LENGTH = 32
+#: BLAKE2 seed string to compute store objects hash.
+BLAKE2_DATA_SEED = b'4ff2c587ae124b0d'
