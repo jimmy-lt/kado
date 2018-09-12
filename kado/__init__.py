@@ -29,3 +29,6 @@ VERSION_INFO = semver.VersionInfo(
     prerelease='alpha0',
     build=None
 )
+
+#: Project version string.
+__version__ = str(VERSION_INFO)
