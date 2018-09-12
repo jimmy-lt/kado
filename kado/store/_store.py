@@ -18,10 +18,16 @@
 # You should have received a copy of the MIT License along with kado.
 # If not, see <http://opensource.org/licenses/MIT>.
 #
+import uuid
+
 from contextlib import suppress
+
+from kado import constants as c
+from kado.store import mixin
 
 
 __all__ = [
+    'Chunk',
     'Index',
 ]
 
@@ -184,3 +190,43 @@ class Index(object):
         """
         with suppress(KeyError, ValueError):
             self.remove(key, value)
+
+
+class Chunk(mixin.HasID, mixin.HasData):
+    """Little piece of data composing an item.
+
+
+    :param data: Data carried by the chunk.
+    :type data: python:bytes
+
+    """
+    __slots__ = ()
+
+
+    def __init__(self, data):
+        """Constructor for :class:`kado.store.Chunk`."""
+        mixin.HasData.__init__(self, data=data)
+        mixin.HasID.__init__(self)
+
+
+    @property
+    def data(self):
+        """Get stored data."""
+        return super().data
+
+
+    @data.setter
+    def data(self, data):
+        """Changing the data carried by a chunk is not supported."""
+        raise NotImplementedError("chunk cannot be mutated.")
+
+
+    def _id_get(self):
+        """Internal method to get the chunk's unique identifier value.
+
+
+        :returns: The generated identifier.
+        :rtype: ~uuid.UUID
+
+        """
+        return uuid.UUID(self.shash[:c.UUID_LEN])

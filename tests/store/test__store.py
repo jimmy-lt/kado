@@ -18,6 +18,7 @@
 # You should have received a copy of the MIT License along with kado.
 # If not, see <http://opensource.org/licenses/MIT>.
 #
+import uuid
 import unittest
 
 from kado.store import _store
@@ -263,3 +264,44 @@ class TestIndex(unittest.TestCase):
     def test_discard_invalid_value(self):
         """Discard of a nonexistent value should not raise ``ValueError``."""
         self.IX_K1V1.discard(key=self.KEY1, value='--INVALID--')
+
+
+class TestChunk(unittest.TestCase):
+    """Test case for :class:`kado.store._store.Chunk`."""
+
+    def test___init__(self):
+        """Test chunk initialization."""
+        TEST_DATA = b'1'
+        TEST_ID = uuid.UUID('14c1130e-e81a-12b5-5612-ae6acfb29ae5')
+        TEST_WHASH = '66b3d38e379784f0'
+        TEST_SHASH = (
+            '14c1130ee81a12b55612ae6acfb29ae54d4dfa75f2551c55ccdaf1e14369d31e'
+        )
+
+        c = _store.Chunk(TEST_DATA)
+        with self.subTest(test='id'):
+            self.assertEqual(c.id, TEST_ID)
+
+        with self.subTest(test='data'):
+            self.assertEqual(c.data, TEST_DATA)
+
+        with self.subTest(test='shash'):
+            self.assertEqual(c.shash, TEST_SHASH)
+
+        with self.subTest(test='whash'):
+            self.assertEqual(c.whash, TEST_WHASH)
+
+
+    def test__data_set_notimplementederror(self):
+        """It should not be possible to reset data of a chunk."""
+        c = _store.Chunk(b'1')
+        with self.assertRaises(NotImplementedError):
+            c.data = b'2'
+
+
+    def test__id_get(self):
+        """Chunk's identifier should match data's strong hash."""
+        TEST_ID = uuid.UUID('14c1130e-e81a-12b5-5612-ae6acfb29ae5')
+
+        c = _store.Chunk(b'1')
+        self.assertEqual(c._id_get(), TEST_ID)

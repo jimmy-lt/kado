@@ -106,6 +106,10 @@ GHASH_MASK_MD = 0x0000d90303530000
 GHASH_MASK_HI = 0x0000d90003530000
 
 
+#: UUID length in bytes.
+UUID_LEN = 32
+
+
 #: 64 bits seed value given to xxHash.
 XXH64_DATA_SEED = 0xdd5ad0a8f4b149d1
 
