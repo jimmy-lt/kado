@@ -228,3 +228,26 @@ class TestHasData(unittest.TestCase):
 
         d.data = TEST_DATA2
         self.assertEqual(d.whash, WHASH_DATA2)
+
+
+class TestHasMetadata(unittest.TestCase):
+    """Test case for :class:`kado.store.mixin.HasMetadata`."""
+
+    def test___setitem___typeerror(self):
+        """A key type other than ``str`` should raise a ``TypeError``."""
+        m = mixin.HasMetadata()
+        with self.assertRaises(TypeError):
+            m[1] = '1'
+
+
+    def test___setitem___valueerror(self):
+        """A value type other than ``str`` should raise a ``TypeError``."""
+        m = mixin.HasMetadata()
+        with self.assertRaises(ValueError):
+            m['1'] = 1
+
+
+    def test__key_try_typeeror(self):
+        """If key is not of string type, ``TypeError`` must be raised."""
+        with self.assertRaises(TypeError):
+            mixin.HasMetadata._key_try(1)

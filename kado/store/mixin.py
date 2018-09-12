@@ -24,6 +24,9 @@ import hmac
 import xxhash
 import hashlib
 
+from contextlib import suppress
+from collections.abc import MutableMapping
+
 from kado import constants as c
 
 
@@ -248,3 +251,165 @@ class HasData(object):
         if not isinstance(data, bytes):
             raise TypeError('expected {}, got {}.'.format(bytes, type(data)))
         self._data = data
+
+
+class HasMetadata(MutableMapping):
+    """Allow implementing classes to carry text metadata as key-value pairs."""
+
+    def __init__(self, *args, **kwargs):
+        """Constructor for :class:`kado.store.mixin.HasMetadata`."""
+        self._metadata = {}
+
+        with suppress(IndexError):
+            if args[0] is not None:
+                self.update(*args, **kwargs)
+
+
+    def __contains__(self, key):
+        """Check if given key is defined within the mapping.
+
+
+        :param key: Key to be look for.
+        :type key: python:str
+
+
+        :returns: Whether given name is defined within the mapping.
+        :rtype: python:bool
+
+
+        :raises TypeError: When given key is not a string.
+
+        """
+        return self._key_try(key) in self._metadata
+
+
+    def __eq__(self, other):
+        """Compare this metadata container with another one.
+
+
+        :param other: The other object to compare with.
+        :type other: ~kado.store.mixin.HasMetadata | python:dict
+
+
+        :returns: Whether both metadata containers are equal or not.
+        :rtype: python:bool
+
+        """
+        return other == self._metadata
+
+
+    def __hash__(self):
+        """Return the hash value of the object.
+
+
+        :returns: The integer hash value of the object.
+        :rtype: python:int
+
+        """
+        return hash(self._metadata)
+
+
+    def __iter__(self):
+        """Get the iterator object of the mapping.
+
+
+        :returns: The mapping's iterator object.
+        :rtype: ~collections.abc.Iterator
+
+        """
+        return iter(self._metadata)
+
+
+    def __len__(self):
+        """Returns the number of keys stored into the mapping.
+
+
+        :returns: Number of items stored in the mapping.
+        :rtype: python:int
+
+        """
+        return len(self._metadata)
+
+
+    def __repr__(self):
+        """String representation of the mapping."""
+        return repr(self._metadata)
+
+
+    def __str__(self):
+        """Printable string of the mapping."""
+        return str(self._metadata)
+
+
+    def __delitem__(self, key):
+        """Remove a key from the mapping.
+
+
+        :param key: Key to be deleted.
+        :type key: python:str
+
+
+        :raises KeyError: When the key cannot be found in the mapping.
+
+        :raises TypeError: When given key is not a string.
+
+        """
+        del self._metadata[self._key_try(key)]
+
+
+    def __getitem__(self, key):
+        """Get an item from the mapping.
+
+
+        :param key: Key mapping to the item to be retrieved.
+        :type key: python:str
+
+
+        :returns: The requested item.
+        :rtype: python:str
+
+
+        :raises KeyError: When the key cannot be found in the mapping.
+
+        :raises TypeError: When given key is not a string.
+
+        """
+        return self._metadata[self._key_try(key)]
+
+
+    def __setitem__(self, key, value):
+        """Set a new entry into the mapping.
+
+
+        :param key: Key for the new entry.
+        :type key: python:str
+
+        :param value: Value of the entry.
+        :type value: python:str
+
+
+        :raises TypeError: When given key is not a string.
+
+        :raises ValueError: When given value is not a string.
+
+        """
+        if not isinstance(value, str):
+            raise ValueError("expected {}, got {}.".format(str, type(value)))
+        self._metadata[self._key_try(key)] = value
+
+
+    @staticmethod
+    def _key_try(key):
+        """Make sure that given key is of the correct type.
+
+
+        :param key: Key to be checked.
+        :type key: python:str
+
+
+        :raises TypeError: When given key is not a string.
+
+        """
+        if not isinstance(key, str):
+            raise TypeError("expected {}, got {}.".format(str, type(key)))
+        return key
