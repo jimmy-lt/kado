@@ -1,0 +1,96 @@
+# tests/lib/constants.py
+# ======================
+#
+# Copying
+# -------
+#
+# Copyright (c) 2018 kado authors.
+#
+# This file is part of the *kado* project.
+#
+# kado is a free software project. You can redistribute it and/or
+# modify if under the terms of the MIT License.
+#
+# This software project is distributed *as is*, WITHOUT WARRANTY OF ANY
+# KIND; including but not limited to the WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE and NONINFRINGEMENT.
+#
+# You should have received a copy of the MIT License along with kado.
+# If not, see <http://opensource.org/licenses/MIT>.
+#
+
+#: List of test data file chunks and their SHA256 hexadecimal digest.
+DATA_CHUNKS_SHA256 = {
+    'data/rand8kb.bin': [
+        (     0,   8192, 'dd6f4e2b8e4ce06d4502326f627b7e0ee88cee48e70def44dfa448aed6476b92'),
+    ],
+    'data/rand64kb.bin': [
+        (     0,   4515, '6f42c414f0eb3e6054ce59d5907e71ef51072687792d992506eec0171e85a8af'),
+        (  4515,  18009, 'efdcd2871985a3758e795432fa99f89e2a5a1fb6b9ac20e228a7f931e515ea2f'),
+        ( 18009,  27789, '0364e120290cc729c6adad8ee7dda2bc455c18cbd98eca3512bd7f3dd21a0954'),
+        ( 27789,  36135, '9f020adb109e6dc35b60623b48f9d3b29c4405489e2b239e1e45ec0cddce3c42'),
+        ( 36135,  46576, 'ea996bb12b9f7afef310b8e9f8868efff1a06183fef3af0892fbc88fe7defec4'),
+        ( 46576,  61001, '1bdfa4bf5d3b8cebd194bbb39fe29b30bfea4febe1f018d36c1d4aded7e2aa6b'),
+        ( 61001,  65536, 'cc1674a87872a0a9faba78e5adee0d9e3e3fbc2c5539af40571d073481057650'),
+    ],
+    'data/rand128kb.bin': [
+        (     0,   8317, '94112e37c23385ee5f012cc86b530bf1ac52c78e9c39e2bc5ddaf222f9cf4508'),
+        (  8317,  17688, 'd6be177ff53d96d339e62a317ddb04ab6ae54cd3051e1624f6e697623793cc8b'),
+        ( 17688,  28372, 'f811ce3783e5e1cf8a59989a5fd37e7e410822a0a5ffb2a28a604b01baee7ed6'),
+        ( 28372,  39279, '287f720b0472d809b9bde7ca681a16c74aedc9e943b93870bf427c214a8a16e9'),
+        ( 39279,  47683, 'acfa531572792a2b07c4037cab65db6cff97a3ba34bda5bef4305a607552ee88'),
+        ( 47683,  52649, 'bc63aa96586b4657d24df2928bff6cdb7ee764d8053b47741c149efc1fac44d5'),
+        ( 52649,  62986, '3fd78f7b9ece36b5879fca3d4cd9d680b7c6652d23936c1503917011a1da5cd9'),
+        ( 62986,  73221, 'b3fa20565fd23119550359696d94b7343a884623ea314229e7c54a3494ff62d9'),
+        ( 73221,  86967, 'b28182174b4ac2499dd8e2718cec68a348712de94f2ce4fc4302a1ae1adf3061'),
+        ( 86967,  97426, 'a6b34e1c91995d02121a791540d9975b96f31d9df9a824b28071ce022705820d'),
+        ( 97426, 107753, '6333aeee040778e4b494775d2b6bfcad632ab42b16aec0e7d61c68bd1c9c4c64'),
+        (107753, 120049, '578ba5ad46b14ce8fd4bcb80298df8d5f735155305c6359b7ece93500fd85812'),
+        (120049, 128568, 'be4e1e6164725199d3d164b0191d4122c48b37ef24dcb6f34768fc7c3cce333b'),
+        (128568, 131072, '48d0deac5e7d91796de75f58210c76d65dbffcd991daaf1ffdc3798f23dac229'),
+    ],
+    'data/rand256kb.bin': [
+        (     0,   8725, '82fd495cd62f39424c587ff335662872bd846be44feb024d7129d593a93e4d87'),
+        (  8725,  18915, 'f5748eba459bedb8148629274f7458e6c0070d88899d6a531912d9f9764ec010'),
+        ( 18915,  28168, '739c332e105853dcb654c3da0da14fd87fa848cecf58c884e89c575c71551dde'),
+        ( 28168,  39002, 'a136f68ebaddff1e5dc6905cb0e27f6d834a07d257f41c549e58a20027141680'),
+        ( 39002,  51566, '7e2986959dfdd55de1c02594c277b5ca58d83df7a0536dea30c631e20d221c07'),
+        ( 51566,  70863, '31716ae893da9b6df371db8ba4e78d7f724919bf9cdce42ab3e067a80bcae720'),
+        ( 70863,  79112, 'b9489fb19eadd7d216c600f6179d6047f06c9701108baaf0d6177e23621531b1'),
+        ( 79112,  88414, 'f2f51cafbdbf51b428b2dbbe67d7388c6c1cbeb7747b5eedd0fe50cd30f4ff5f'),
+        ( 88414,  99125, '071be582a49a9a29a439ae045e95825eebf985c4080f89c2666193369b3fb26e'),
+        ( 99125, 106020, 'a3e0cc02c9a0a2c8763b3ae31520548ad8581696f28649c12965f5ed64968b8c'),
+        (106020, 116428, '24aecf832cdaa68271e21c6c45c8961d186ff94d2e53f02b14a8924078c123a8'),
+        (116428, 125122, 'f43b90b369887c27685a5d639ca66a24049652c088de78649834c900c4c6dfb2'),
+        (125122, 135525, '19f4851fd07b7edc14d01b608399f9541712b2395791c7d8341bf60a81334d1b'),
+        (135525, 144839, '799ede4c1139c24b28c4d7e365f4a29befd4795747b81f18d07c43e320ad9f27'),
+        (144839, 153947, '18853c6e34e9ef384a70601a44b6632a1b13bb5657ee2d8e0de1caa2de080404'),
+        (153947, 168953, '4848d6736fcc2b2216e2d4919fc0a0ebf2d858c95b8fe798d34a9185d1d46603'),
+        (168953, 177155, 'd169c8abdf90370113f54780d150b74b9b85e90bd30ef67b9104c7bcb40391e2'),
+        (177155, 185374, '3e4746ad20f19c84d9b4acebf55b7f4277fbfc170120a3945fa0dbfba6cb2490'),
+        (185374, 196826, 'aa16e38b56b4c9efc03d100f8d2129efa2d21f84aa005c9cd6c74242763ba2f3'),
+        (196826, 208163, '558b6a2c0ca610f0e4ff73854c6737eee8b04f2f55e1ff60cf567c12ee55ce00'),
+        (208163, 223455, '8f1f919529217a0195960a19ef863f7a85e249958c3eb3e1665c9e67682fb804'),
+        (223455, 238114, '0ccb646109ce14ae15b5b77ec19a8ca0f6a6e21ffe92fa831bd7fabc716c2601'),
+        (238114, 245210, 'f9e0e8e6a683e0d72540df95e9310b9d7976e83b5ee8d1d67d456185ad5a25e3'),
+        (245210, 248914, 'c7bc320808bce171058ec5aa0a12ecc0370e24b61a2972c972f2b93207422c0b'),
+        (248914, 257229, '99c1967d62545e9d095551442189de8d465b24b0f811d7b0942b2c61b8cabe36'),
+        (257229, 262144, '73f0cee2478e92361c17c7e35030902e51baa8e4097662370c6bc1a627c7b5f3'),
+    ],
+    'data/zero8kb.bin': [
+        (     0,   8192, '9f1dcbc35c350d6027f98be0f5c8b43b42ca52b7604459c0c42be3aa88913d47'),
+    ],
+    'data/zero64kb.bin': [
+        (     0,  65536, 'de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31'),
+    ],
+    'data/zero128kb.bin': [
+        (     0,  65536, 'de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31'),
+        ( 65536, 131072, 'de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31'),
+    ],
+    'data/zero256kb.bin': [
+        (     0,  65536, 'de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31'),
+        ( 65536, 131072, 'de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31'),
+        (131072, 196608, 'de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31'),
+        (196608, 262144, 'de2f256064a0af797747c2b97505dc0b9f3df0de4f489eac731c23ae9ca9cc31'),
+    ],
+}
