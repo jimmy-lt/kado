@@ -24,11 +24,13 @@ from contextlib import suppress
 
 from kado import constants as c
 from kado.store import mixin
+from kado.utils import ghash, htree
 
 
 __all__ = [
     'Chunk',
     'Index',
+    'Item',
 ]
 
 
@@ -230,3 +232,118 @@ class Chunk(mixin.HasID, mixin.HasData):
 
         """
         return uuid.UUID(self.shash[:c.UUID_LEN])
+
+
+class Item(mixin.HasID, mixin.HasData, mixin.HasMetadata):
+    """The primary data structure for kado to store data.
+
+
+    :param data: The actual data to be stored.
+    :type data: python:bytes
+
+    :param metadata: Initial metadata to associate with the item's data.
+    :type metadata: python:dict
+
+    """
+    __slots__ = ('chunks', )
+
+
+    def __init__(self, data=b'', metadata=None):
+        """Constructor for :class:`kado.store.Item`."""
+        self.chunks = []
+
+        mixin.HasMetadata.__init__(self, metadata)
+        mixin.HasData.__init__(self, data=data)
+        mixin.HasID.__init__(self)
+
+
+    def __len__(self):
+        """Return the bytes length of the item."""
+        return sum(len(chunk) for chunk in self.chunks)
+
+
+    @staticmethod
+    def _shash_init(size=c.BLAKE2_DATA_LENGTH, seed=c.BLAKE2_DATA_SEED):
+        """Initialize the object to compute a strong cryptographic hash of
+        stored data.
+
+
+        :param size: Length of the digest size to be returned by the hash
+                     function.
+        :type size: python:int
+
+        :param seed: Random string to randomize the output of the hash function.
+        :type seed: python:bytes
+
+
+        :returns: The initialized cryptographic hash function.
+
+        """
+        return htree.HTree(mixin.HasData._shash_init(size, seed))
+
+
+    @staticmethod
+    def _whash_init(seed=c.XXH64_DATA_SEED):
+        """Initialize the object to compute a weak hash of stored data.
+
+
+        :param seed: Random string to randomize the output of the hash function.
+        :type seed: python:bytes
+
+
+        :returns: The initialized hash function.
+
+        """
+        return htree.HTree(mixin.HasData._whash_init(seed=seed))
+
+
+    def _data_hash(self, h):
+        """Update given hash object with the object's data.
+
+
+        :param h: The hash function to be updated.
+
+        """
+        for chunk in self.chunks:
+            h.update(chunk.data)
+
+
+    def _data_get(self):
+        """Return item's stored data.
+
+
+        :returns: The data carried by the object.
+        :rtype: python:bytes
+
+        """
+        return b''.join(x.data for x in self.chunks)
+
+
+    def _data_set(self, data):
+        """Set given data into the item.
+
+
+        :param data: Data to be stored by the object.
+        :type data: python:bytes
+
+
+        :raises TypeError: When given data is not a bytes-like object.
+
+        """
+        if not isinstance(data, bytes):
+            raise TypeError('expected {}, got {}.'.format(bytes, type(data)))
+        self.chunks = [Chunk(chunk) for _, _, chunk in ghash.chop(data)]
+
+
+    def copy(self):
+        """Return a copy (“clone”) of the item.
+
+
+        :returns: A copy of the item.
+        :rtype: ~kado.store._store.Item
+
+        """
+        obj = Item(metadata={k: v for k, v in self.items()})
+        obj.chunks = self.chunks.copy()
+
+        return obj

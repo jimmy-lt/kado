@@ -20,8 +20,11 @@
 #
 import uuid
 import unittest
+import pkg_resources
 
 from kado.store import _store
+
+from tests.lib import constants as tc
 
 
 class TestIndex(unittest.TestCase):
@@ -305,3 +308,129 @@ class TestChunk(unittest.TestCase):
 
         c = _store.Chunk(b'1')
         self.assertEqual(c._id_get(), TEST_ID)
+
+
+class TestItem(unittest.TestCase):
+    """Test case for :class:`kado.store._store.Item`."""
+
+    def test___init___chunks(self):
+        """Ensure chunks from known data files are computed as expected."""
+        for name, chunks in tc.DATA_CHUNKS_KADO.items():
+            with pkg_resources.resource_stream('tests.lib', name) as fp:
+                item = _store.Item(fp.read())
+
+            for idx, ck in enumerate(item.chunks):
+                with self.subTest(file=name, chunk=idx, test='whash'):
+                    self.assertEqual(chunks[idx][2], ck.whash)
+
+                with self.subTest(file=name, chunk=idx, test='shash'):
+                    self.assertEqual(chunks[idx][3], ck.shash)
+
+
+    def test___init___hash(self):
+        """Test the hashes of an item from known data files."""
+        for name, hashes in tc.DATA_HTREE_KADO.items():
+            with pkg_resources.resource_stream('tests.lib', name) as fp:
+                item = _store.Item(fp.read())
+
+            with self.subTest(file=name, test='whash'):
+                self.assertEqual(item.whash, hashes[0])
+
+            with self.subTest(file=name, test='shash'):
+                self.assertEqual(item.shash, hashes[1])
+
+
+    def test___init___metadata(self):
+        """Ensure the item's metadata is properly initialized."""
+        TEST_META = {
+            'a': 'a',
+            'b': 'b',
+            'c': 'c',
+        }
+
+        item = _store.Item(metadata=TEST_META)
+        for k, v in TEST_META.items():
+            with self.subTest(key=k):
+                self.assertEqual(item[k], v)
+
+
+    def test___len___data_files(self):
+        """Test item length loaded with known data files."""
+        for name in tc.DATA_CHUNKS_KADO:
+            with pkg_resources.resource_stream('tests.lib', name) as fp:
+                content = fp.read()
+
+            l_content = len(content)
+            item = _store.Item(content)
+
+            with self.subTest(file=name):
+                self.assertEqual(len(item), l_content)
+
+
+    def test_data_get_data_files(self):
+        """Test getting item's data property loaded with known data files."""
+        for name in tc.DATA_CHUNKS_KADO:
+            with pkg_resources.resource_stream('tests.lib', name) as fp:
+                content = fp.read()
+
+            item = _store.Item(content)
+            with self.subTest(file=name):
+                self.assertEqual(item.data, content)
+
+
+    def test_data_set_data_files(self):
+        """Test setting item's data property loaded with known data files."""
+        for name, chunks in tc.DATA_CHUNKS_KADO.items():
+            item = _store.Item()
+            with pkg_resources.resource_stream('tests.lib', name) as fp:
+                item.data = fp.read()
+
+            for idx, ck in enumerate(item.chunks):
+                with self.subTest(file=name, chunk=idx, test='whash'):
+                    self.assertEqual(chunks[idx][2], ck.whash)
+
+                with self.subTest(file=name, chunk=idx, test='shash'):
+                    self.assertEqual(chunks[idx][3], ck.shash)
+
+
+    def test_data_set_typeerror(self):
+        """If data type is not ``bytes``, ``TypeError`` must be raised."""
+        item = _store.Item()
+        with self.assertRaises(TypeError):
+            item.data = 1
+
+
+    def test_copy_data_only(self):
+        """Test copy of an item with only data loaded."""
+        item1 = _store.Item(b'1')
+        item2 = item1.copy()
+
+        with self.subTest(test='id'):
+            # Both items should not share the same ID.
+            self.assertNotEqual(item1.id, item2.id)
+
+        with self.subTest(test='data'):
+            self.assertEqual(item1.data, item1.data)
+
+
+    def test_copy_with_metadata(self):
+        """Test copy of an item carrying metadata."""
+        TEST_META = {
+            'a': 'a',
+            'b': 'b',
+            'c': 'c',
+        }
+
+        item1 = _store.Item(b'1', metadata=TEST_META)
+        item2 = item1.copy()
+
+        with self.subTest(test='id'):
+            # Both items should not share the same ID.
+            self.assertNotEqual(item1.id, item2.id)
+
+        with self.subTest(test='data'):
+            self.assertEqual(item1.data, item1.data)
+
+        with self.subTest(test='metadata'):
+            for k, v in item1.items():
+                self.assertEqual(item2[k], v)
