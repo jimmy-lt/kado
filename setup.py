@@ -74,4 +74,10 @@ setup(
         'semver',
         'xxhash',
     ],
+
+    entry_points={
+        'console_scripts': [
+            'kado = kado.__main__:main'
+        ],
+    },
 )
