@@ -21,6 +21,7 @@
 import sys
 import logging
 import argparse
+import pkg_resources
 
 from kado import __version__
 
@@ -41,6 +42,35 @@ def parse_args(args):
     parser.add_argument('-V', '--version',
                         action='version',
                         version='%(prog)s {version}'.format(version=__version__))
+
+    pkg_actions = {
+        e.name: (e.load()(), str(e).split('=')[1].strip())
+        for e in pkg_resources.iter_entry_points('kado.actions')
+    }
+
+    if pkg_actions:
+        action_p = parser.add_subparsers(title='action',
+                                         dest='action',
+                                         metavar='<action>')
+
+        seen = set()
+        for action, dist in pkg_actions.values():
+            if seen.intersection(action.names):
+                # We cannot accept two actions carrying the same name.
+                log.debug("Action names collision for {} on {}".format(
+                    dist, seen.intersection(action.names)
+                ))
+                continue
+
+            log.debug("Parsing arguments for action {}.".format(dist))
+            curr_p = action_p.add_parser(action.names[0],
+                                         aliases=action.names[1:],
+                                         help=action.description)
+
+            for a_args, a_kwargs in action.arguments:
+                curr_p.add_argument(*a_args, **a_kwargs)
+
+            seen.update(action.names)
 
     return vars(parser.parse_args(args))
 

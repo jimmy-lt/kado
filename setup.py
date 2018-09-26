@@ -30,6 +30,14 @@ with suppress(OSError), open(os.path.join(HERE, 'README.rst')) as fp:
     LONG_DESCRIPTION = fp.read()
 
 
+def read_actions():
+    """Get a list of all actions defined by this package."""
+    _ns = {}
+    with open(os.path.join(HERE, 'kado', 'actions', '__init__.py')) as fp:
+        exec(fp.read(), _ns)
+    return [x for x in _ns.get('__all__', ())]
+
+
 setup(
     name='kado',
     version='0.0.0-alpha0',
@@ -78,6 +86,13 @@ setup(
     entry_points={
         'console_scripts': [
             'kado = kado.__main__:main'
+        ],
+        'kado.actions': [
+            "{action} = kado.actions.{action}:{Action}".format(
+                action=action,
+                Action=action.capitalize()
+            )
+            for action in read_actions()
         ],
     },
 )
