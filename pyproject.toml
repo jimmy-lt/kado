@@ -23,6 +23,22 @@ requires = ["poetry>=1.0"]
 build-backend = "poetry.masonry.api"
 
 
+[tool.isort]
+py_version = "36"
+known_third_party = ["pkg_resources", "semver", "setuptools", "xxhash"]
+atomic = true
+combine_as_imports = true
+combine_star = true
+include_trailing_comma = true
+length_sort = true
+line_length = 80
+lines_after_imports = 2
+lines_between_types = 1
+multi_line_output = 3
+order_by_type = true
+use_parentheses = true
+
+
 [tool.poetry]
 name = "kado"
 version = "0.1.0-alpha.1"
@@ -66,3 +82,4 @@ xxhash = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
+pre-commit = "*"
