@@ -82,6 +82,7 @@ kado = "kado.__main__:main"
 python = "^3.6"
 semver = "^2.10.0"
 xxhash = "^2.0.0"
+sphinx = {version = "^3.2.1", extras = ["docs"]}
 
 [tool.poetry.dev-dependencies]
 coverage = "*"
