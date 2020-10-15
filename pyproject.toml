@@ -75,6 +75,9 @@ include = [
     "CONTRIBUTORS.rst",
 ]
 
+[tool.poetry.scripts]
+kado = "kado.__main__:main"
+
 [tool.poetry.dependencies]
 python = "^3.6"
 semver = "^2.10.0"
