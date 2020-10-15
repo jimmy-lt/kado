@@ -17,4 +17,4 @@ form::
 List of copyright holders
 -------------------------
 
-- Jimmy Thrasibule <kado@jimmy.lt>
+- Jimmy Thrasibule <dev@jimmy.lt>
